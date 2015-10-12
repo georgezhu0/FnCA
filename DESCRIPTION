@@ -1,0 +1,14 @@
+Package: FnCA
+Type: Package
+Title: Brain Network Functional Connectivity Analysis using fMRI
+Version: 0.1
+Date: 2015-10-12
+Author: Who wrote it
+Maintainer: Who to complain to <yourfault@somewhere.net>
+Description: A R implementation
+License: What license is it under?
+LazyData: TRUE
+Imports:
+  ANTsR,
+  R.cache,
+  ggplot2
