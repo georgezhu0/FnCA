@@ -68,6 +68,11 @@ We start with the following data:
 #mocoParams <-read.csv("data/exampleMocoParams.csv")
 #pts <- read.csv("data/exampleLabels.csv")
 
+img <- antsImageRead("/Users/George/PICSL/Data/rsBOLD/c001_2013_10_21_1345_0005_ep2d_max_bold_processed_mni.nii.gz")
+mask <- antsImageRead("/Users/George/PICSL/Data/rsBOLD/MNI152_T1_2mm_CerebrumMask.nii.gz")
+seg <- antsImageRead("/Users/George/PICSL/Data/rsBOLD/MNI152_T1_2mm_BrainSegmentation.nii.gz")
+mocoParams <-read.csv("/Users/George/PICSL/Data/rsBOLD/c001_2013_10_21_1345_0005_ep2d_max_bold_processed_MOCOparams.csv")
+pts <- read.csv("/Users/George/PICSL/Data/rsBOLD/areal_rois_itk.csv")
 
 ```
 
@@ -258,13 +263,16 @@ This section provides steps on building network graphs. The goal here is to crea
 
 We need to first define a set of ROI (region of interest) to build a network. Using a priori knowledge, it is possible to define ROI in terms of functional networks containing distinct regions of voxels. Each ROI is a sphere with radius of 5.0mm and centered on the points proviede in common network definitions. We will use the function `defineROI()` here.
 
-* **Inputs**: Brain Mask, A set of labels identifying anatomical regions of interest, radius of ROI sphere (default is 5.0mm)
+* **Inputs**: Brain Mask, A set of labels identifying anatomical regions of interest,filtered BOLD signal matrix, index of good timepoints, radius of ROI sphere (default is 5.0mm)
 
-* **Outputs**: Mask image with labeled ROI
+* **Outputs**: Mask image with labeled ROI, ROI labels, Labeled BOLD signal matrix
 
 
 ```{r}
-labelImg <- defineROI(mask,pts)
+labelList <- defineROI(mask,pts,filtered_boldMat,goodTimepoint)
+labelImg <- labelList$labelImg
+labels <- labelList$labels
+labeledBoldMat <- labelList$labeledBoldMat
 ```
 
 
@@ -272,15 +280,12 @@ labelImg <- defineROI(mask,pts)
 
 We then can obtain ROI labels form the labeled mask image. From ROI labels it is possible to compute the mean time signal for each ROI. NOTE: Some ROI labels might not map into the image and thus have 0 voxels. We will use the function `avgROIsignals()` here.
 
-* **Inputs**: filtered and regressed BOLD signal matrix, Brain Mask, mask image with labeled ROI, index of good timepoints
+* **Inputs**:  ROI labels, labeled BOLD signal matrix
 
-* **Outputs**: ROI labels, labeled BOLD signal matrix, mean ROI signal matrix
+* **Outputs**: mean ROI signal matrix
 
 ```{r}
-avgROI <- avgROISignal(filtered_boldMat,mask,labelImg,goodTimepoint)
-labels <- avgROI$labels
-labeled_boldMat <-avgROI$labeledBoldMat
-roiMat <- avgROI$roiMat
+avgRoiMat <- avgROISignal(labels,labeledBoldMat)
 ```
 
 ### System ROI
@@ -292,7 +297,7 @@ If system labels are provided for the ROIs, it is possible to look at the mean a
 * **Outputs**: system mean signal matrix, system standard deviation matrix
 
 ```{r}
-system <- systemROI(labels,labeled_boldMat,roiMat,pts)
+system <- systemROI(labels,labeledBoldMat,avgRoiMat,pts)
 sysMatMean <- system$sysMatMean
 sysMatSD <- system$sysMatSD
 ```
@@ -302,13 +307,13 @@ sysMatSD <- system$sysMatSD
 
 The mean time signal for each ROI allows us to find the correlation matrix that measures the correlation between ROI signals. We will use the funciton `corrMatROI()` here.
 
-* **Inputs**: ROI labels,  mean ROI signal matrix
+* **Inputs**:  mean ROI signal matrix, ROI labels
 
 * **Outputs**: ROI signals correlation matrix
 
 
 ```{r}
-corMat <- corrMatROI(roiMat,labels)
+corMat <- corrMatROI(avgRoiMat,labels)
 ```
 
 
