@@ -14,23 +14,42 @@ FnCA is designed to analyze Functional Connectivity in Brain Networks from a gra
 
 ## Contents
 
-1. [fMRI Preprocessing](#fmri-preprocessing)
+1. [Getting Started](#getting-started)
+    + [Libraries](#libraries)
+    + [Data](#data)
+    
+2. [fMRI Preprocessing](#fmri-preprocessing)
     + [Motion Correction](#motion-correction)
+    + [Steady State](#steady-state)
+    + [Framewise Displacement](#framewise-displacement)
+    + [Identify Bad Timepoints](#identify-bad-timepoints)
 
-2. [Connectivity Preprocessing](#connectivity-preprocessing)
+3. [Connectivity Preprocessing](#connectivity-preprocessing)
+    + [Data Detrending](#data-detrending)
+    + [Collect Nuisance Parameters](#collect-nuisance-parameters)
+    + [Regress Nuisance Parameters](#regress-nuisance-parameters)
+    + [Frequency Filtering](#frequency-filtering)
 
-3. [Building Functional Network](#building-functional-network)
+4. [Building Functional Network](#building-functional-network)
+    + [Define ROI](#define-roi)
+    + [Average ROI Signals](#average-roi-signals)
+    + [System ROI](#system-roi)
+    + [ROI Correlation Matrix](#roi-correlation-matrix)
+    + [Constant Density Graph](#constant-density-graph)
+    
+5. [Graph Metrics Analysis](#graph-metrics-analysis)
+    + [Node measures](#node-measures)
 
-4. [Graph Metrics Analysis](#graph-metrics=analysis)
 
+## Getting started
 
-## Setting up
+### Libraries 
 
-Before we start, the following libraries are required for the functionalities of FnCA:
+The following libraries are used for the functionalities of FnCA:
 ```{r,message=FALSE}
 library("ANTsR")
 library("ggplot2")
-library("R.cache")  #storage for descriptive statistics
+library("R.cache")  #storage for global data descriptive statistics
 library("pracma")
 library("mFilter")
 library("igraph") 
@@ -39,7 +58,9 @@ library("FnCA")
 ```
 
 
-We also start with the following data:
+### Data
+
+We start with the following data:
 ```{r}
 #img <- antsImageRead("data/exampleImage.nii.gz")
 #mask <- antsImageRead("data/exampleMask.nii.gz")
@@ -49,6 +70,7 @@ We also start with the following data:
 
 
 ```
+
 
 * `img:` A BOLD fMRI time-series image, it is recommended to use a motion corrected image with its associated motion correction (MOCO) parameters . If not, follow the section [Motion Correction](#motion-correction) to obtain a motion corrected image and motion correction parameters.
 
@@ -74,6 +96,7 @@ head(pts,2)
 
 ## fMRI Preprocessing
 
+This section provides methods used in processing fMRI for creating Functional Networks. The goal here is to find defective timepoints to eliminate. The procedure includes applying motion correction, finding steady state, and accounting for displacement.
 
 ### Motion Correction
 
@@ -82,9 +105,9 @@ head(pts,2)
 
 The first step of preprocessing is to remove pre steady state time points. By convention, it is typical to exclude data obtained during the first 10 seconds. We will use the function `findSteadyState()` here.
 
-* *Inputs*: fMRI Image, Brain Mask, MOCO Parameters, pre steady state timepoints (deafault is 10 seconds) 
+* **Inputs**: fMRI Image, Brain Mask, MOCO Parameters, pre steady state timepoints (deafault is 10 seconds) 
 
-* *Outputs*: steady state fMRI Image, steady state MOCO Parameters
+* **Outputs**: steady state fMRI Image, steady state MOCO Parameters
 
 
 ```{r,message=FALSE}
@@ -107,9 +130,9 @@ dim(steady_mocoParams)
 
 After finding the steady state, we will now look at framewise displacement. Framewise dispalcement measures the displacement of voxels between consecutive time points. It provides insight on motion between two timepoints. We will use the function `getDisplacement()` here.
 
-* *Inputs*: steady state fMRI Image, Brain Mask, steady state MOCO Parameters
+* **Inputs**: steady state fMRI Image, Brain Mask, steady state MOCO Parameters
 
-* *Outputs*: mean framewise displacement, max framewise displacement
+* **Outputs**: mean framewise displacement, max framewise displacement
 
 
 ```{r,message=FALSE}
@@ -123,9 +146,9 @@ maxDisplacement <-  displacement$MaxDisplacement
 
 Mean framewise displacement data can help identify "bad" timepoints in fMRI. In common human data, a mean framewise displacement $>$ 0.2mm is considered "bad". However, the default threshold in our function is 0.1 mm since the displacement is a measure of motion between two timepoints, both timepoints associated with the displacement are marked as bad. We will use the function `findBadTimepoints()` here.
 
-* *Inputs*: steady state fMRI Image, mean framewise displacement, displacement threshold for identification (deafault is 0.1mm) 
+* **Inputs**: steady state fMRI Image, mean framewise displacement, displacement threshold for identification (deafault is 0.1mm) 
 
-* *Outputs*: Index of good timepoints, Index of bad timepoints (NULL if no bad timepoints)
+* **Outputs**: Index of good timepoints, Index of bad timepoints (NULL if no bad timepoints)
 
 
 In some cases, no bad timepoints will be identified:
@@ -150,15 +173,18 @@ length(goodTimepoint)
 length(badTimepoint)
 ```
 
-## Connectivity Processing
+## Connectivity Preprocessing
+
+This section provides specific steps to process the resting state data provided from fMRI. The goal here is to extract BOLD signal data from fMRI. The procedure includes detrending data, regressing nuisance parameters, filtering frequency, and smoothing data.
+
 
 ### Data Detrending
 
 When converting the fMRI timeseries image to a BOLD signal matrix, it is important to exclude the bad timepoints identified earlier. We will use the function `detrendTimeseries()` here.
 
-* *Inputs*: steady state fMRI Image, Brain Mask, index of good timepoints, index of bad timepoints
+* **Inputs**: steady state fMRI Image, Brain Mask, index of good timepoints, index of bad timepoints
 
-* *Outputs*: BOLD signal matrix 
+* **Outputs**: BOLD signal matrix 
 
 ```{r}
 boldMat <- detrendTimeseries(steady_img,mask,goodTimepoint,badTimepoint)
@@ -180,9 +206,9 @@ In the BOLD signal matrix, some signals are considered as nuisance and should be
 
 We will use the function `collectNuisParams()` here.
 
-* *Inputs*: BOLD singal matrix, Tissue Segmentation, Brain Mask, index of good timepoints, index of badtimepoints
+* **Inputs**: BOLD singal matrix, Tissue Segmentation, Brain Mask, index of good timepoints, index of badtimepoints
 
-* *Outputs*: A list of Nuisance Parameters containing: cortex voxel index , mean cortex signal, white matter index, mean white matter signal, CSF index, mean CSF signal, mean global signal, physiological nuisance parameters, tissue nuisance parameters, tissue signal derivative
+* **Outputs**: A list of Nuisance Parameters containing: cortex voxel index , mean cortex signal, white matter index, mean white matter signal, CSF index, mean CSF signal, mean global signal, physiological nuisance parameters, tissue nuisance parameters, tissue signal derivative
 
 ```{r}
 NuisList <- collectNuisParams(boldMat,seg,mask,goodTimepoint,badTimepoint)
@@ -197,9 +223,9 @@ names(NuisList)
 
 The nuissance parameters identified above are now regressed out the BOLD signal. We will use the function *regressNuisParams()* here.
 
-* *Inputs*: BOLD singal matrix, steady state MOCO parameters, BOLD Nuisance Parameter list, index of good timepoints
+* **Inputs**: BOLD singal matrix, steady state MOCO parameters, BOLD Nuisance Parameter list, index of good timepoints
 
-* *Outputs*: regressed BOLD signal matrix
+* **Outputs**: regressed BOLD signal matrix
 
 ```{r}
 regBoldMat <- regressNuisParams(boldMat,steady_mocoParams,NuisList,goodTimepoint) 
@@ -211,9 +237,9 @@ regBoldMat <- regressNuisParams(boldMat,steady_mocoParams,NuisList,goodTimepoint
 The next step is frequency filtering. Frequency filtering get srid of non-evenly sampled time-series data.
 Bad timepoints are filled with interpolated data to avoid having non-evenly sampled time-series data and removed after frequency filtering. Spatial smoothing is then applied after frequency filtering to all spatial dimensions. In common cases, frequencies with the range of 0.009 Hz - 0.08 Hz are retained and a smoothing factor of FWHM=6.0mm is applied. We will used the function `filterFrequency()` here.
 
-* *Inputs*: steady state fMRI image, Brain Mask, regressed BOLD singal matrix, cortex voxel index from Nuisance Parameters List, index of good timepoints, index of bad timepoints, lower bound of filtering frequency (default is 0.009), upper bound of filtering frequency (default is 0.08), smoothing factor (default is 6.0)
+* **Inputs**: steady state fMRI image, Brain Mask, regressed BOLD singal matrix, cortex voxel index from Nuisance Parameters List, index of good timepoints, index of bad timepoints, lower bound of filtering frequency (default is 0.009), upper bound of filtering frequency (default is 0.08), smoothing factor (default is 6.0)
 
-* *Outputs*: filtered steady state fMRI image, filtered and regressed BOLD signal matrix
+* **Outputs**: filtered steady state fMRI image, filtered and regressed BOLD signal matrix
 
 ```{r}
 filtered <- filterFrequency(steady_img,mask,regBoldMat,NuisList$ctxVox,goodTimepoint,badTimepoint)
@@ -225,13 +251,16 @@ filtered_boldMat <- filtered$boldMat
 
 ## Building Functional Network
 
+This section provides steps on building network graphs. The goal here is to create a correlation matrix of BOLD signal to construct functional networks. The procedure includes defining ROI, calculating ROI signals, and finding correlation between ROI signals. 
+
+
 ### Define ROI
 
 We need to first define a set of ROI (region of interest) to build a network. Using a priori knowledge, it is possible to define ROI in terms of functional networks containing distinct regions of voxels. Each ROI is a sphere with radius of 5.0mm and centered on the points proviede in common network definitions. We will use the function `defineROI()` here.
 
-* *Inputs*: Brain Mask, A set of labels identifying anatomical regions of interest, radius of ROI sphere (default is 5.0mm)
+* **Inputs**: Brain Mask, A set of labels identifying anatomical regions of interest, radius of ROI sphere (default is 5.0mm)
 
-* *Outputs*: Mask image with labeled ROI
+* **Outputs**: Mask image with labeled ROI
 
 
 ```{r}
@@ -241,12 +270,11 @@ labelImg <- defineROI(mask,pts)
 
 ### Average ROI Signals
 
-
 We then can obtain ROI labels form the labeled mask image. From ROI labels it is possible to compute the mean time signal for each ROI. NOTE: Some ROI labels might not map into the image and thus have 0 voxels. We will use the function `avgROIsignals()` here.
 
-* *Inputs*: filtered and regressed BOLD signal matrix, Brain Mask, mask image with labeled ROI, index of good timepoints
+* **Inputs**: filtered and regressed BOLD signal matrix, Brain Mask, mask image with labeled ROI, index of good timepoints
 
-* *Outputs*: ROI labels, labeled BOLD signal matrix, mean ROI signal matrix
+* **Outputs**: ROI labels, labeled BOLD signal matrix, mean ROI signal matrix
 
 ```{r}
 avgROI <- avgROISignal(filtered_boldMat,mask,labelImg,goodTimepoint)
@@ -259,9 +287,9 @@ roiMat <- avgROI$roiMat
 
 If system labels are provided for the ROIs, it is possible to look at the mean and standard deviation for the BOLD signal within a system. The mean signal between systems shows how much those systems are working together, while the standard deviation ribbons indicate how cohesively the components of a system are working. We will use the fucntion `systemROI()` here.
 
-* *Inputs*: ROI labels, labeled BOLD signal matrix, mean ROI signal matrix, set of labels identifying anatomical regions of interest
+* **Inputs**: ROI labels, labeled BOLD signal matrix, mean ROI signal matrix, set of labels identifying anatomical regions of interest
 
-* *Outputs*: system mean signal matrix, system standard deviation matrix
+* **Outputs**: system mean signal matrix, system standard deviation matrix
 
 ```{r}
 system <- systemROI(labels,labeled_boldMat,roiMat,pts)
@@ -274,9 +302,9 @@ sysMatSD <- system$sysMatSD
 
 The mean time signal for each ROI allows us to find the correlation matrix that measures the correlation between ROI signals. We will use the funciton `corrMatROI()` here.
 
-* *Inputs*: ROI labels,  mean ROI signal matrix
+* **Inputs**: ROI labels,  mean ROI signal matrix
 
-* *Outputs*: ROI signals correlation matrix
+* **Outputs**: ROI signals correlation matrix
 
 
 ```{r}
@@ -288,9 +316,9 @@ corMat <- corrMatROI(roiMat,labels)
 
 Network graphs are created by using a constant density. In our analysis, we will create a network with density=0.1, that is, we binarize the correlation matrix to retain 10% of the edges, favoring the egdes with the highest correlation values. The resulting adjacency matrix is then used to create a graph. We will use the function `densityGraph()` here.
 
-* *Inputs*: Correlation Matrix, set of labels identifying anatomical regions of interest, density of retaining edgeds (default is 0.1)
+* **Inputs**: Correlation Matrix, set of labels identifying anatomical regions of interest, density of retaining edgeds (default is 0.1)
 
-* *Outputs*: ROI adjacency matrix
+* **Outputs**: ROI adjacency matrix
 
 
 ```{r}
@@ -298,6 +326,8 @@ adjMat <- densityGraph(corMat,pts)
 ```
 
 ## Graph Metrics Analysis
+
+This section provides steps on calculating graph metrics. The goal here is to find insights on connectivity from graph metrics data. The procedure includes using graph theory, and analyzing its paths and edges.
 
 ### Node measures
 
@@ -313,7 +343,7 @@ Graph metrics are used for each node in the graph. The following is a non-compre
 
 * Page-rank - Google page rank measure
 
-It is also possible to summarize the entire network with a single, global measure. A global metric can be obtained by averaging all nodes. Global metrics include:
+It is also possible to summarize the entire network with global measure. A global metric can be obtained by averaging all nodes. The optional global metrics are:
 
 * Global efficiency - closeness of nodes to all other nodes
 
@@ -321,9 +351,9 @@ It is also possible to summarize the entire network with a single, global measur
 
 We will use the function `graphMeasure()` here.
 
-* *Inputs*: ROI adjacency matrix
+* **Inputs**: ROI adjacency matrix
 
-* *Outputs*: the number of connections that include the node, local neighborhood connectivity, mean shortest distance between one node and all others, "closeness" off nodes in a neighborhood, Google page rank measure, closeness of nodes to all other nodes,  global neighborhood connectivity
+* **Outputs**: the number of connections that include the node, local neighborhood connectivity, mean shortest distance between one node and all others, "closeness" off nodes in a neighborhood, Google page rank measure, closeness of nodes to all other nodes,  global neighborhood connectivity
 
 
 ```{r}
