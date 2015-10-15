@@ -11,7 +11,7 @@ systemROI(labels, labeledBoldMat, roiMat, pts, providePlot = TRUE)
 
 \item{labeledBoldMat}{labeled BOLD time series matrix}
 
-\item{roiMat}{ROI matrix}
+\item{roiMat}{average ROI matrix}
 
 \item{pts}{labels identifying anatomical regions of interest}
 

@@ -4,27 +4,18 @@
 \alias{avgROISignal}
 \title{Get ROI Average Signals}
 \usage{
-avgROISignal(boldMat, mask, labelImg, goodtimes, providePlot = TRUE)
+avgROISignal(labels, labeledBoldMat, providePlot = TRUE)
 }
 \arguments{
-\item{boldMat}{BOLD timer series matrix}
+\item{labels}{ROI labels}
 
-\item{mask}{mask for BOLD image (3D)}
-
-\item{labelImg}{ROI labels image}
-
-\item{goodtimes}{list of interger index of good timepoints}
+\item{labeledBoldMat}{Labeled BOLD signal matrix}
 
 \item{providePlot}{Boolean determine whether descriptive statistics should be provided
 if TRUE, the plot will be cached and can be called}
 }
 \value{
-list of output containing:
-\itemize{
-\item{labels:}{ ROI labels}
-\item{labeledBoldMat:}{Labeled BOLD signal matrix}
-\item{roiMat:}{ Average ROI signal matrix}
-}
+Average ROI signal matrix
 }
 \description{
 Compute the mean time singal for each ROI using ROI labels.

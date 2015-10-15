@@ -3,8 +3,8 @@
 #' Find the Mean of BOLD data Time Series, this is done by calculating 
 #' the mean of each voxel at all timepoints
 #' 
-#' @param  bold input 4D image
-#' @param  boolean for plotting, default is FALSE
+#' @param  img bold input 4D image
+#' @param  providePlot boolean for plotting, default is FALSE
 #' @return antsImage of temporal mean
 #' 
 #' @examples

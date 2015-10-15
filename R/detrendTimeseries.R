@@ -55,7 +55,7 @@ detrendTimeseries <- function(
 
   #creating bold matrix
   global_moco <- rowMeans(timeseries2matrix(img, mask))
-  boldMat = timeseries2matrix(img, mask)
+  boldMat <- timeseries2matrix(img, mask)
 
   #detrend
   boldMat[goodtimes,] = detrend(boldMat[goodtimes,])
@@ -65,15 +65,17 @@ detrendTimeseries <- function(
     boldMat[badtimes,] = NA
   }
 
-  global_moco_detrend = rowMeans(boldMat)
-  if(!(is.integer(badtimes) && length(badtimes) == 0)){
-    global_moco[badtimes] = NA
-  }
 
   #plot
   if(providePlot){
     #required plot inputs
     nTimes <- length(goodtimes)+length(badtimes)
+
+    #global MOCO detrend 
+    global_moco_detrend <- rowMeans(boldMat)
+    if(!(is.integer(badtimes) && length(badtimes) == 0)){
+      global_moco[badtimes] = NA
+    }
 
     trend.dat = data.frame( Time=rep(1:nTimes,2) )
     trendType = c( rep("Motion-corrected",nTimes) )

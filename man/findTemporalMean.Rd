@@ -7,9 +7,9 @@
 findTemporalMean(img, providePlot = FALSE)
 }
 \arguments{
-\item{bold}{input 4D image}
+\item{img}{bold input 4D image}
 
-\item{boolean}{for plotting, default is FALSE}
+\item{providePlot}{boolean for plotting, default is FALSE}
 }
 \value{
 antsImage of temporal mean

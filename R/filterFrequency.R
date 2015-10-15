@@ -56,11 +56,6 @@ filterFrequency <- function(
     }
   }
 
-  #test if cahced tr exists
-  if (is.null(loadCache(key = list("tr"))) ){
-    stop("ERROR: Image spacing cache not found, run rsBOLDSteadyState First")
-  }
-
 
   if (!is.antsImage(img)) {
     stop("ERROR: Input image must be of classs 'antsImages'")
@@ -77,7 +72,14 @@ filterFrequency <- function(
   #required inputs
   nTimes <- length(goodtimes) + length(badtimes)
   nVox = length(which(ANTsR::as.array(mask) == 1))
-  tr <- loadCache(key = list("tr"))
+  
+  #test if cache for image spacing exists
+  if (is.null(loadCache(key = list("tr"))) ){
+    tr <- antsGetSpacing(img)[4]
+    saveCache(tr,list("tr"))
+  } else {
+    tr <- loadCache(key = list("tr"))
+  }
 
   ##FILTER##
   #if there is bad timepoints

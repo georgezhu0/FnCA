@@ -4,17 +4,27 @@
 \alias{defineROI}
 \title{Defining ROI of functional network}
 \usage{
-defineROI(mask, pts, radius = 5)
+defineROI(mask, pts, boldMat, goodtimes, radius = 5)
 }
 \arguments{
 \item{mask}{mask for BOLD image (3D)}
 
 \item{pts}{labels identifying anatomical regions of interest}
 
+\item{boldMat}{BOLD signal matrix}
+
+\item{goodtimes}{list of interger index of good timepoints}
+
 \item{radius}{radius of each ROI sphere, default is 5.0mm}
 }
 \value{
 ROI labels image
+list of output containing:
+\itemize{
+\item{labelImg:}{ Labeled ROI img}
+\item{labels:}{ ROI labels}
+\item{labeledBoldMat:}{ Labeled BOLD signal matrix}
+}
 }
 \description{
 A set of ROI is needed for creating network, define ROIs that contain many

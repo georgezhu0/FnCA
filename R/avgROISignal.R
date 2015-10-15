@@ -3,25 +3,18 @@
 #' Compute the mean time singal for each ROI using ROI labels.
 #'
 #'
-#' @param boldMat BOLD timer series matrix
-#' @param mask mask for BOLD image (3D)
-#' @param labelImg ROI labels image
-#' @param goodtimes list of interger index of good timepoints
+#' @param labels ROI labels
+#' @param labeledBoldMat Labeled BOLD signal matrix
 #' @param providePlot Boolean determine whether descriptive statistics should be provided
 #' if TRUE, the plot will be cached and can be called
 #'
-#' @return list of output containing:
-#' \itemize{
-#' \item{labels:}{ ROI labels}
-#' \item{labeledBoldMat:}{Labeled BOLD signal matrix}
-#' \item{roiMat:}{ Average ROI signal matrix}
-#' }
+#' @return  Average ROI signal matrix
 #'
 #' @export avgROISignal
 
 
 avgROISignal <- function(
-  boldMat,mask,labelImg,goodtimes,providePlot=TRUE){
+  labels,labeledBoldMat,providePlot=TRUE){
   #check requirements
   if (!usePkg("ANTsR")) {
     print("Need ANTsR package")
@@ -44,19 +37,7 @@ avgROISignal <- function(
     }
   }
 
-  if(!is.antsImage(mask)){
-    stop("ERROR: Input mask must be of classs 'antsImages'")
-  }
-
-
-  labelMask = labelImg*1
-  labelMask[labelMask > 0] = 1
-  labelMask[mask == 0] = 0
-  labelVox = which(subset(labelMask, mask > 0)==1)
-
-  labeledBoldMat = boldMat[goodtimes,labelVox]
-  labels = labelImg[labelMask > 0]
-
+  #creating inputs
   nLabels = max(labels)
   roiMat = matrix(0, nrow=dim(labeledBoldMat)[1], ncol=nLabels)
   for ( i in c(1:nLabels) ) {
@@ -86,6 +67,6 @@ avgROISignal <- function(
 
     saveCache(meanPlot,list("mp"))
   }
-  return(list( labels = labels, labeledBoldMat = labeledBoldMat, roiMat = roiMat))
+  return(roiMat)
 
 }

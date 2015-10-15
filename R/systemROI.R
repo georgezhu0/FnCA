@@ -6,7 +6,7 @@
 #'
 #' @param labels labels
 #' @param labeledBoldMat labeled BOLD time series matrix
-#' @param roiMat ROI matrix
+#' @param roiMat average ROI matrix
 #' @param pts labels identifying anatomical regions of interest
 #' @param providePlotprovidePlot Boolean determine whether descriptive statistics should be provided
 #' if TRUE, the plot will be cached and can be called
@@ -58,6 +58,8 @@ systemROI <- function(
 
   systems = pts$System[labels]
 
+  lut <- list()
+
   for ( i in 1:nSystems ) {
     sys = systemNames[i]
     sysIdx = which(systems==sys)
@@ -74,8 +76,19 @@ systemROI <- function(
     nActualTimes <- dim(roiMat)[1]
 
     #name and color
-    systemNickNames = c("Motor/Hand", "Motor/Mouth", "CO-Task", "Auditory", "Default", "Memory", "Visual", "FP-Task", "Salience", "Subcortical", "V Attention", "D Attention", "Cerebellar", "Uncertain" )
-    lut = list("Motor/Hand"="cyan3", "Motor/Mouth"="orange", "CO-Task"="purple", "Auditory"="pink2", "Default"="red", "Memory"="gray50", "Visual"="blue", "FP-Task"="yellow2", "Salience"="black", "Subcortical"="chocolate4", "V Attention"="aquamarine4", "D Attention"="green", "Cerebellar"="cadetblue1", "Uncertain"="peachpuff2" )
+    systemNickNames <- systemNames
+
+    lut <- list()
+    for ( i in 1:nSystems ) {
+      sys = systemNickNames[i]
+      r <- as.integer(pts$r[which(pts$System ==  sys)[1]])
+      g <- as.integer(pts$g[which(pts$System ==  sys)[1]])
+      b <- as.integer(pts$b[which(pts$System ==  sys)[1]])
+      lut[i]  <- rgb(r,g,b,maxColorValue=255)
+    }
+    
+    names(lut) <- systemNames
+
 
     sys.dat = data.frame(Time=rep( (1:nActualTimes)*tr, nSystems))
     sys.dat$Signal = as.vector(sysMatMean)

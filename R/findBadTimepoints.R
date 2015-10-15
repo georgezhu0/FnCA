@@ -10,8 +10,8 @@
 #' if TRUE, the plot will be cached and can be called
 #' @return list of outputs containing:
 #' \itemize{
-#' \item{good}{ Index of good timepoints}
-#' \item{bad}{ Index of bad timepoints}
+#' \item{good:}{ Index of good timepoints}
+#' \item{bad:}{ Index of bad timepoints}
 #' }
 #'
 #'
@@ -46,7 +46,13 @@ findBadTimepoints <- function(
   }
 
   #required inputs
-  tr = antsGetSpacing(img)[4]
+
+  if (is.null(loadCache(key = list("tr"))) ){
+    tr <- antsGetSpacing(img)[4]
+    saveCache(tr,list("tr"))
+  } else {
+    tr <- loadCache(key = list("tr"))
+  }
   nTimes = length(meanDisplacement)
 
   #compare meandisplacement with threshhold

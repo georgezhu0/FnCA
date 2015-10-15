@@ -7,13 +7,22 @@
 #'
 #' @param mask mask for BOLD image (3D)
 #' @param pts labels identifying anatomical regions of interest
+#' @param boldMat BOLD signal matrix
+#' @param goodtimes list of interger index of good timepoints
 #' @param radius radius of each ROI sphere, default is 5.0mm
+#'
 #' @return ROI labels image
+#' list of output containing:
+#' \itemize{
+#' \item{labelImg:}{ Labeled ROI img}
+#' \item{labels:}{ ROI labels}
+#' \item{labeledBoldMat:}{ Labeled BOLD signal matrix}
+#' }
 #'
 #' @export defineROI
 #'
 defineROI <- function(
-  mask,pts,radius = 5.0){
+  mask,pts,boldMat,goodtimes,radius = 5.0){
   #check requirements
   if (!usePkg("ANTsR")) {
     print("Need ANTsR package")
@@ -48,5 +57,21 @@ defineROI <- function(
       }
     }
   }
-  return(labelImg)
+
+  #create a labeled mask
+  labelMask = labelImg*1
+  labelMask[labelMask > 0] = 1
+  labelMask[mask == 0] = 0
+  labelVox = which(subset(labelMask, mask > 0)==1)
+
+  #roi labels
+  labels = labelImg[labelMask > 0]
+
+  #label bold matrix
+  labeledBoldMat = boldMat[goodtimes,labelVox]
+
+
+  return(list( labelImg = labelImg, 
+              labels = labels, 
+              labeledBoldMat = labeledBoldMat))
 }

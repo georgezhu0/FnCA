@@ -33,11 +33,6 @@ getDisplacement <- function(
       print("Need ggplot2 package")
       return(NULL)
     }
-
-    #test if cahced tr exists
-    if (is.null(loadCache(key = list("tr"))) ){
-      stop("ERROR: Image spacing cache not found, run rsBOLDSteadyState First")
-    }
   }
 
   if (!is.antsImage(img)) {
@@ -63,7 +58,13 @@ getDisplacement <- function(
     meanDisplacement <- displacement$MeanDisplacement
     reg_params <- as.matrix(param[,3:8])
     nTimes <- dim(reg_params)[1]
-    tr <- loadCache(key = list("tr"))
+    tr <- antsGetSpacing(img)[4]
+
+    ###save cache for image spacing
+    if (is.null(loadCache(key = list("tr"))) ){
+      saveCache(tr,list("tr"))
+    }
+    ###
 
     orderedBreaks = c("Framewise", "X", "Y", "Z", "Pitch", "Roll", "Yaw" )
     moco.dat <- data.frame(Time=rep(1:nTimes, 7)*tr)
