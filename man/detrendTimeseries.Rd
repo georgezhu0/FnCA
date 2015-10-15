@@ -18,6 +18,9 @@ detrendTimeseries(img, mask, goodtimes, badtimes, providePlot = TRUE)
 \item{providePlot}{Boolean determine whether descriptive statistics should be provided
 if TRUE, the plot will be cached and can be called}
 }
+\value{
+BOLD signal matrix
+}
 \description{
 Demean and detrend BOLD time series while excluding bad timepoints in BOLD
 images

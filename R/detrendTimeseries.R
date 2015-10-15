@@ -11,6 +11,7 @@
 #' @param providePlot Boolean determine whether descriptive statistics should be provided
 #' if TRUE, the plot will be cached and can be called
 #'
+#' @return BOLD signal matrix
 #'
 #' @export detrendTimeseries
 
@@ -87,7 +88,7 @@ detrendTimeseries <- function(
     trendPlot <- trendPlot + theme(text=element_text(size=10), legend.position="top")
     trendPlot <- trendPlot + facet_grid(Category ~ ., scales="free" )
     trendPlot <- trendPlot + ggtitle("Detrending the time-series")
-    saveCache(trendPlot, key = "dp")
+    saveCache(trendPlot, key = list("dp"))
   }
 
   return(boldMat)

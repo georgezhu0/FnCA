@@ -23,8 +23,8 @@ list of node measures, containing:
 \item{pathLen}{mean shortest distance between one node and all others}
 \item{localEff}{"closeness" off nodes in a neighborhood}
 \item{pageRank}{Google page rank measure}
-\item(OPTIONAL: globalClustCoeff){closeness of nodes to all other nodes}
-\item{OPTIONAL: globalEff}{global neighborhood connectivity}
+\item(OPTIONAL: globalClustCoeff){ closeness of nodes to all other nodes}
+\item{OPTIONAL: globalEff}{ global neighborhood connectivity}
 }
 }
 \description{

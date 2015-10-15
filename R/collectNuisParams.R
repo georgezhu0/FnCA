@@ -16,7 +16,20 @@
 #' @param badtimes list of interger index of bad timepoints
 #' @param providePlot Boolean determine whether descriptive statistics should be provided
 #' if TRUE, the plot will be cached and can be called
-#' @return list of output containing:
+#'
+#' @return list of outputs containing:
+#' \itemize{
+#' \item{ctxVox}{ Index of cortex voxels}
+#' \item{ctxMean}{ Mean of cortex voxel signals}
+#' \item{wmVox}{ Index of white matter}
+#' \item{wmMean}{ Mean of white matter signals}
+#' \item{csfVox}{ Index of CSF}
+#' \item{csfMean}{ Mean of CSF signals}
+#' \item{globalMean}{ Mean of Global signals}
+#' \item{compcorNuis}{ Physiological nuisance parameters}
+#' \item{tissueNuis}{ Tissue nuisance parameters}
+#' \item{tissueDeriv}{ Derivative of tissue nuisance singals}
+#' }
 #'
 #' @export collectNuisParams
 

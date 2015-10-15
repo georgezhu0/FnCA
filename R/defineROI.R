@@ -5,7 +5,7 @@
 #' functional network to which each region belongs. Default radius of ROI
 #' sphere is 5.0mm
 #'
-#' @param maks mask for BOLD image (3D)
+#' @param mask mask for BOLD image (3D)
 #' @param pts labels identifying anatomical regions of interest
 #' @param radius radius of each ROI sphere, default is 5.0mm
 #' @return ROI labels image

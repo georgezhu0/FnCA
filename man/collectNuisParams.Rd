@@ -21,7 +21,19 @@ collectNuisParams(boldMat, seg, mask, goodtimes, badtimes, providePlot = TRUE)
 if TRUE, the plot will be cached and can be called}
 }
 \value{
-list of output containing:
+list of outputs containing:
+\itemize{
+\item{ctxVox}{ Index of cortex voxels}
+\item{ctxMean}{ Mean of cortex voxel signals}
+\item{wmVox}{ Index of white matter}
+\item{wmMean}{ Mean of white matter signals}
+\item{csfVox}{ Index of CSF}
+\item{csfMean}{ Mean of CSF signals}
+\item{globalMean}{ Mean of Global signals}
+\item{compcorNuis}{ Physiological nuisance parameters}
+\item{tissueNuis}{ Tissue nuisance parameters}
+\item{tissueDeriv}{ Derivative of tissue nuisance singals}
+}
 }
 \description{
 Collect the nuisance parameters in BOLD global signals to regress out.

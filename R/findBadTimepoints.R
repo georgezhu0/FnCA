@@ -10,8 +10,8 @@
 #' if TRUE, the plot will be cached and can be called
 #' @return list of outputs containing:
 #' \itemize{
-#' \item{good}{Index of good timepoints}
-#' \item{bad}{Index of bad timepoints}
+#' \item{good}{ Index of good timepoints}
+#' \item{bad}{ Index of bad timepoints}
 #' }
 #'
 #'
