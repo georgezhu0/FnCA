@@ -20,8 +20,8 @@ if TRUE, the plot will be cached and can be called}
 adjacency matrix
 }
 \description{
-Binarize ROI correlation matrix and create an adjacency matrix. The
-adjacency matrix is then used to create network density graph from graph
-operations. Default density is 0.1
+Binarize ROI correlation matrix by keeping certain edgeds and create an
+adjacency matrix. The adjacency matrix is then used to create network
+density graph from graph operations. Default density is 0.1
 }
 

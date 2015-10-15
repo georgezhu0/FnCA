@@ -1,11 +1,12 @@
 #' Compute Correlation matrix for ROI signals
 #'
 #' Use the mean time signal for each ROI and find the correlation between
-#' each of these ROI signals
+#' each ROI signals
 #'
 #' @param roiMat ROI average signal matrix
 #' @param labels A set of labels identifying anatomical regions of interest
 #'
+#' @return ROI signal correlation matrix
 #'
 #' @export corrMatROI
 

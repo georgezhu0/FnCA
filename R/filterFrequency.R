@@ -19,8 +19,8 @@
 #'
 #' @return list of output containing:
 #' \itemize{
-#' \item{img}{ Processed 4D fMRI image}
-#' \item{boldMat}{ Processed BOLD time series matrix}
+#' \item{img:}{ Processed 4D fMRI image}
+#' \item{boldMat:}{ Processed BOLD time series matrix}
 #' }
 #'
 #' @export filterFrequency

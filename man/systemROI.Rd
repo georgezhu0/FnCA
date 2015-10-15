@@ -19,7 +19,11 @@ systemROI(labels, labeledBoldMat, roiMat, pts, providePlot = TRUE)
 if TRUE, the plot will be cached and can be called}
 }
 \value{
-list of output containing
+list of output containing:
+\itemize{
+\item{sysMatMean:}{ System BOLD signal mean matrix}
+\item{sysMatSD:}{ System BOLD signal standard deviation matrix}
+}
 }
 \description{
 Given ROI system labels, provide the mean and the standard deviation for

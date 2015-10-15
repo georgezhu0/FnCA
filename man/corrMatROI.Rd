@@ -11,8 +11,11 @@ corrMatROI(roiMat, labels)
 
 \item{labels}{A set of labels identifying anatomical regions of interest}
 }
+\value{
+ROI signal correlation matrix
+}
 \description{
 Use the mean time signal for each ROI and find the correlation between
-each of these ROI signals
+each ROI signals
 }
 

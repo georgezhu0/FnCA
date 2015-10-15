@@ -19,9 +19,14 @@ avgROISignal(boldMat, mask, labelImg, goodtimes, providePlot = TRUE)
 if TRUE, the plot will be cached and can be called}
 }
 \value{
-ROI matrix
+list of output containing:
+\itemize{
+\item{labels:}{ ROI labels}
+\item{labeledBoldMat:}{Labeled BOLD signal matrix}
+\item{roiMat:}{ Average ROI signal matrix}
+}
 }
 \description{
-Get ROI Average Signals
+Compute the mean time singal for each ROI using ROI labels.
 }
 

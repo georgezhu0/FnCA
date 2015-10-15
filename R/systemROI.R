@@ -11,7 +11,12 @@
 #' @param providePlotprovidePlot Boolean determine whether descriptive statistics should be provided
 #' if TRUE, the plot will be cached and can be called
 #'
-#' @return list of output containing
+#' @return list of output containing:
+#' \itemize{
+#' \item{sysMatMean:}{ System BOLD signal mean matrix}
+#' \item{sysMatSD:}{ System BOLD signal standard deviation matrix}
+#' }
+#'
 #'
 #' @export systemROI
 

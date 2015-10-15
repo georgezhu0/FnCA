@@ -1,12 +1,21 @@
 #' Get ROI Average Signals
 #'
+#' Compute the mean time singal for each ROI using ROI labels.
+#'
+#'
 #' @param boldMat BOLD timer series matrix
 #' @param mask mask for BOLD image (3D)
 #' @param labelImg ROI labels image
 #' @param goodtimes list of interger index of good timepoints
 #' @param providePlot Boolean determine whether descriptive statistics should be provided
 #' if TRUE, the plot will be cached and can be called
-#' @return ROI matrix
+#'
+#' @return list of output containing:
+#' \itemize{
+#' \item{labels:}{ ROI labels}
+#' \item{labeledBoldMat:}{Labeled BOLD signal matrix}
+#' \item{roiMat:}{ Average ROI signal matrix}
+#' }
 #'
 #' @export avgROISignal
 

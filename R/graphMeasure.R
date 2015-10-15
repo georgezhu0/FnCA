@@ -10,13 +10,13 @@
 #' if TRUE, the plot will be cached and can be called
 #' @return list of node measures, containing:
 #' \itemize{
-#' \item{Degree}{the number of connections that include the node}
-#' \item{localClustCoeff}{local neighborhood connectivity}
-#' \item{pathLen}{mean shortest distance between one node and all others}
-#' \item{localEff}{"closeness" off nodes in a neighborhood}
-#' \item{pageRank}{Google page rank measure}
-#' \item(OPTIONAL: globalClustCoeff){ closeness of nodes to all other nodes}
-#' \item{OPTIONAL: globalEff}{ global neighborhood connectivity}
+#' \item{Degree：}{ Number of links connected to a node}
+#' \item{localClustCoeff：}{ Local neighborhood connectivity}
+#' \item{pathLen:}{ Mean shortest distance between one node and all others}
+#' \item{localEff:}{ Closeness of nodes in a neighborhood}
+#' \item{pageRank: }{ Google page rank measure}
+#' \item{(OPTIONAL) globalClustCoeff： }{ Closeness of nodes to all other nodes}
+#' \item{(OPTIONAL) globalEff： }{ Global neighborhood connectivity}
 #'}
 #'
 #' @export graphMeasure

@@ -1,8 +1,8 @@
 #' Create Network Density Graph
 #'
-#' Binarize ROI correlation matrix and create an adjacency matrix. The
-#' adjacency matrix is then used to create network density graph from graph
-#' operations. Default density is 0.1
+#' Binarize ROI correlation matrix by keeping certain edgeds and create an
+#' adjacency matrix. The adjacency matrix is then used to create network
+#' density graph from graph operations. Default density is 0.1
 #'
 #' @param corMat ROI correlation matrix
 #' @param pts labels identifying anatomical regions of interest
