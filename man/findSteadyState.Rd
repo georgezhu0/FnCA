@@ -23,8 +23,8 @@ if TRUE, the plot will be cached and can be called}
 \value{
 list of outputs containing:
 \itemize{
-\item{ss_img}{Steady State BOLD image}
-\item{OPTIONAL: ss_MOCOParams}{Steady State MocoParameters}
+\item{ss_img}{ Steady State BOLD image}
+\item{OPTIONAL: ss_MOCOParams}{ Steady State MocoParameters}
 }
 }
 \description{

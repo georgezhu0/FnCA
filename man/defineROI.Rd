@@ -7,11 +7,11 @@
 defineROI(mask, pts, radius = 5)
 }
 \arguments{
+\item{mask}{mask for BOLD image (3D)}
+
 \item{pts}{labels identifying anatomical regions of interest}
 
-\item{maks}{mask for BOLD image (3D)}
-
-\item{rqdius}{radius of each ROI sphere, default is 5.0mm}
+\item{radius}{radius of each ROI sphere, default is 5.0mm}
 }
 \value{
 ROI labels image
